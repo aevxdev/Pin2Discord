@@ -97,12 +97,15 @@ function createButton(host) {
     button.textContent = "Добавляем...";
 
     try {
+      const pinLink = record.image.closest('a[href*="/pin/"]');
+      const sourceUrl = pinLink?.href || location.href;
+      const pinId = sourceUrl.match(/\/pin\/(\d+)/)?.[1] || null;
+
       const response = await chrome.runtime.sendMessage({
         type: "ADD_TO_QUEUE",
         imageUrl: getBestImageUrl(record.image),
-        sourceUrl:
-          record.image.closest('a[href*="/pin/"]')?.href ||
-          location.href
+        sourceUrl,
+        pinId
       });
 
       if (!response?.success) {

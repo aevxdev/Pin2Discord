@@ -1,3 +1,4 @@
+
 let creatingOffscreen = null;
 let queueOperation = Promise.resolve();
 
@@ -39,7 +40,6 @@ async function handleMessage(message) {
 
     case "UPDATE_QUEUE_ITEM":
       await updateQueueItem(message.id, message.changes);
-
       return { success: true };
 
     case "OFFSCREEN_READY":
@@ -53,13 +53,9 @@ async function handleMessage(message) {
   }
 }
 
-// Последовательное изменение очереди,
-// чтобы параллельные обновления не перезаписывали друг друга.
 function serializeQueueOperation(operation) {
   const result = queueOperation.then(operation);
-
   queueOperation = result.catch(() => {});
-
   return result;
 }
 
@@ -69,7 +65,7 @@ async function getQueue() {
 }
 
 async function addToQueue(message) {
-  const { imageUrl, sourceUrl } = message;
+  const { imageUrl, sourceUrl, pinId } = message;
 
   if (!imageUrl) {
     throw new Error("Нет URL изображения");
@@ -87,22 +83,37 @@ async function addToQueue(message) {
   const result = await serializeQueueOperation(async () => {
     const queue = await getQueue();
 
-    if (queue.some(item => item.imageUrl === imageUrl)) {
+    const duplicate = queue.some(item => {
+      if (pinId && item.pinId) {
+        return item.pinId === pinId;
+      }
+
+      if (!pinId && !item.pinId) {
+        return item.imageUrl === imageUrl;
+      }
+
+      return false;
+    });
+
+    if (duplicate) {
       return {
         success: true,
         duplicate: true
       };
     }
 
-    queue.push({
+    const item = {
       id: crypto.randomUUID(),
+      pinId: pinId || null,
       imageUrl,
       sourceUrl,
       status: "waiting",
       downloadStatus: "waiting",
       discordStatus: "waiting",
       addedAt: Date.now()
-    });
+    };
+
+    queue.push(item);
 
     await chrome.storage.local.set({ queue });
 

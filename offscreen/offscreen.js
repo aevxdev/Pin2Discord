@@ -1,4 +1,6 @@
+
 let processing = false;
+let rerunRequested = false;
 
 function sendToBackground(message) {
   return chrome.runtime.sendMessage(message);
@@ -169,7 +171,6 @@ async function sendToDiscord(image, settings) {
 async function processImage(image, settings) {
   const tasks = [];
 
-  // Сохранение на компьютер
   if (settings.saveImages) {
     tasks.push(
       saveImage(image)
@@ -180,10 +181,10 @@ async function processImage(image, settings) {
             downloadError: null
           });
         })
-        .catch(error => {
+        .catch(async error => {
           console.error("Ошибка сохранения:", error);
 
-          return updateItem(image.id, {
+          await updateItem(image.id, {
             downloadStatus: "error",
             downloadError: error.message
           });
@@ -198,7 +199,6 @@ async function processImage(image, settings) {
     );
   }
 
-  // Отправка в Discord
   tasks.push(
     sendToDiscord(image, settings)
       .then(() => {
@@ -207,10 +207,10 @@ async function processImage(image, settings) {
           discordError: null
         });
       })
-      .catch(error => {
+      .catch(async error => {
         console.error("Ошибка Discord:", error);
 
-        return updateItem(image.id, {
+        await updateItem(image.id, {
           discordStatus: "error",
           discordError: error.message
         });
@@ -221,32 +221,46 @@ async function processImage(image, settings) {
 }
 
 async function processQueue() {
-  if (processing) return;
+  if (processing) {
+    rerunRequested = true;
+    return;
+  }
 
   processing = true;
 
   try {
-    const settings = await getSettings();
-    const queue = await getQueue();
+    do {
+      rerunRequested = false;
 
-    for (const image of queue) {
-      const downloadFinished = [
-        "done",
-        "skipped"
-      ].includes(image.downloadStatus);
+      const settings = await getSettings();
+      const queue = await getQueue();
 
-      const discordFinished = image.discordStatus === "done";
+      for (const image of queue) {
+        const downloadFinished = [
+          "done",
+          "skipped"
+        ].includes(image.downloadStatus);
 
-      if (downloadFinished && discordFinished) {
-        continue;
+        const discordFinished = image.discordStatus === "done";
+
+        if (downloadFinished && discordFinished) {
+          continue;
+        }
+
+        await processImage(image, settings);
       }
 
-      await processImage(image, settings);
-    }
+    } while (rerunRequested);
+
   } catch (error) {
     console.error("Pin2Discord processor:", error);
+
   } finally {
     processing = false;
+
+    if (rerunRequested) {
+      processQueue();
+    }
   }
 }
 
