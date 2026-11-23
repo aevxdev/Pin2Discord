@@ -244,3 +244,20 @@ imageObserver.observe(document.documentElement, {
 
 observeImages();
 scheduleUpdate();
+
+// Повторно проверяем страницу, пока Pinterest не отрисует пины.
+let startupAttempts = 0;
+
+const startupRetry = setInterval(() => {
+  startupAttempts++;
+
+  observeImages();
+  scheduleUpdate();
+
+  if (
+    document.querySelector(".pin2discord-floating") ||
+    startupAttempts >= 40
+  ) {
+    clearInterval(startupRetry);
+  }
+}, 500);
