@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pin2Discord</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="app">
+
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">P</div>
+        <span>Pin2Discord</span>
+      </div>
+
+      <button class="settings-button" id="settingsButton" title="Настройки">
+        ⚙
+      </button>
+    </header>
+
+    <section class="queue-section">
+      <div class="section-heading">
+        <h2>Очередь</h2>
+        <span id="queueCount">0 изображений</span>
+      </div>
+
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">▧</div>
+        <h3>Пока пусто</h3>
+        <p>Добавляй изображения с Pinterest</p>
+      </div>
+
+      <div class="image-grid" id="imageGrid"></div>
+    </section>
+
+    <section class="actions">
+      <button class="send-button" id="sendButton" disabled>
+        Отправить всё
+      </button>
+
+      <button class="clear-button" id="clearButton">
+        Очистить очередь
+      </button>
+    </section>
+
+    <footer class="footer">
+      <span id="downloadStatus">Загрузка готова</span>
+      <span id="discordStatus">Discord не подключён</span>
+    </footer>
+
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>

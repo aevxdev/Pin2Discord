@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pin2Discord — Настройки</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main class="container">
+
+    <header class="header">
+      <div>
+        <h1>Pin2Discord</h1>
+        <p>Настройки расширения</p>
+      </div>
+
+      <div class="brand-icon">P</div>
+    </header>
+
+    <section class="settings-card">
+      <h2>Discord Integration</h2>
+      <p class="description">
+        Подключи Discord Webhook для отправки изображений.
+      </p>
+
+      <label for="webhook">Webhook URL</label>
+      <input
+        type="password"
+        id="webhook"
+        placeholder="https://discord.com/api/webhooks/..."
+      >
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="showWebhook">
+        Показать Webhook URL
+      </label>
+    </section>
+
+    <section class="settings-card">
+  <h2>Сохранение изображений</h2>
+
+  <p class="description">
+    Выбери папку, в которую Pin2Discord будет сохранять изображения.
+  </p>
+
+  <div class="folder-picker">
+    <div class="folder-info">
+      <span class="folder-icon">📁</span>
+      <div>
+        <strong id="folderName">Папка не выбрана</strong>
+        <p id="folderStatus">Выбери папку на компьютере</p>
+      </div>
+    </div>
+
+    <button type="button" id="chooseFolder">
+      Выбрать папку
+    </button>
+  </div>
+
+  <label class="checkbox-row">
+    <input type="checkbox" id="saveImages" checked>
+    Сохранять изображения на компьютер
+  </label>
+</section>
+
+      <p class="hint">
+        Например: Pinterest/ или Images/Pinterest/
+      </p>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="saveImages" checked>
+        Сохранять изображения на компьютер
+      </label>
+    </section>
+
+    <section class="settings-card">
+      <h2>Дополнительно</h2>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="sendSource">
+        Добавлять ссылку на оригинальный пин
+      </label>
+    </section>
+
+    <div class="actions">
+      <button id="saveButton">Сохранить настройки</button>
+      <span id="saveStatus"></span>
+    </div>
+
+    <footer>
+      Pin2Discord · Version 1.0.0
+    </footer>
+
+  </main>
+
+  <script src="options.js"></script>
+</body>
+</html>
