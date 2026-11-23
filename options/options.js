@@ -1,4 +1,3 @@
-
 const webhookInput = document.getElementById("webhook");
 const showWebhook = document.getElementById("showWebhook");
 
@@ -14,7 +13,6 @@ const folderStatus = document.getElementById("folderStatus");
 
 let selectedDirectory = null;
 
-// IndexedDB для хранения доступа к выбранной папке
 function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("Pin2DiscordDB", 1);
@@ -63,29 +61,34 @@ async function getDirectoryHandle() {
   });
 }
 
-// Проверяем доступ к папке
 async function checkDirectory() {
-  selectedDirectory = await getDirectoryHandle();
+  try {
+    selectedDirectory = await getDirectoryHandle();
 
-  if (!selectedDirectory) {
-    folderName.textContent = "Папка не выбрана";
-    folderStatus.textContent = "Выбери папку на компьютере";
-    return;
+    if (!selectedDirectory) {
+      folderName.textContent = "Папка не выбрана";
+      folderStatus.textContent = "Выбери папку на компьютере";
+      return;
+    }
+
+    const permission = await selectedDirectory.queryPermission({
+      mode: "readwrite"
+    });
+
+    folderName.textContent = selectedDirectory.name;
+
+    folderStatus.textContent = permission === "granted"
+      ? "Доступ разрешён"
+      : "Нужно повторно подтвердить доступ";
+
+  } catch (error) {
+    console.error(error);
+
+    folderName.textContent = "Ошибка доступа";
+    folderStatus.textContent = "Выбери папку заново";
   }
-
-  const permission = await selectedDirectory.queryPermission({
-    mode: "readwrite"
-  });
-
-  folderName.textContent = selectedDirectory.name;
-
-  folderStatus.textContent = permission === "granted"
-    ? "Доступ разрешён"
-    : "Потребуется подтвердить доступ";
-
 }
 
-// Выбор папки через системное окно
 chooseFolderButton.addEventListener("click", async () => {
   try {
     const handle = await window.showDirectoryPicker({
@@ -110,18 +113,17 @@ chooseFolderButton.addEventListener("click", async () => {
 
     console.error(error);
 
-    folderStatus.textContent = "Не удалось выбрать папку";
+    folderStatus.textContent = error.message ||
+      "Не удалось выбрать папку";
   }
 });
 
-// Показываем / скрываем Webhook
 showWebhook.addEventListener("change", () => {
   webhookInput.type = showWebhook.checked
     ? "text"
     : "password";
 });
 
-// Загружаем настройки
 async function loadSettings() {
   const settings = await chrome.storage.local.get({
     webhook: "",
@@ -136,15 +138,20 @@ async function loadSettings() {
   await checkDirectory();
 }
 
-// Сохраняем настройки
 saveButton.addEventListener("click", async () => {
-  await chrome.storage.local.set({
-    webhook: webhookInput.value.trim(),
-    saveImages: saveImages.checked,
-    sendSource: sendSource.checked
-  });
+  try {
+    await chrome.storage.local.set({
+      webhook: webhookInput.value.trim(),
+      saveImages: saveImages.checked,
+      sendSource: sendSource.checked
+    });
 
-  saveStatus.textContent = "Настройки сохранены!";
+    saveStatus.textContent = "Настройки сохранены!";
+
+  } catch (error) {
+    console.error(error);
+    saveStatus.textContent = "Ошибка сохранения настроек";
+  }
 
   setTimeout(() => {
     saveStatus.textContent = "";

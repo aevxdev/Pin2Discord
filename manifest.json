@@ -1,18 +1,17 @@
-
 {
   "manifest_version": 3,
   "name": "Pin2Discord",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Save Pinterest images to your PC and Discord.",
   "permissions": [
     "storage",
-    "downloads"
+    "downloads",
+    "offscreen"
   ],
   "host_permissions": [
     "https://i.pinimg.com/*",
     "https://discord.com/*"
   ],
-
   "background": {
     "service_worker": "background.js"
   },
@@ -21,17 +20,6 @@
     "default_title": "Pin2Discord"
   },
   "options_page": "options/options.html",
-  "web_accessible_resources": [
-  {
-    "resources": [
-      "processor/processor.html",
-      "processor/processor.js"
-    ],
-    "matches": [
-      "https://*.pinterest.com/*"
-    ]
-  }
-],
   "content_scripts": [
     {
       "matches": [

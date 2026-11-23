@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -21,11 +20,13 @@
 
     <section class="settings-card">
       <h2>Discord Integration</h2>
+
       <p class="description">
         Подключи Discord Webhook для отправки изображений.
       </p>
 
       <label for="webhook">Webhook URL</label>
+
       <input
         type="password"
         id="webhook"
@@ -39,35 +40,26 @@
     </section>
 
     <section class="settings-card">
-  <h2>Сохранение изображений</h2>
+      <h2>Сохранение изображений</h2>
 
-  <p class="description">
-    Выбери папку, в которую Pin2Discord будет сохранять изображения.
-  </p>
-
-  <div class="folder-picker">
-    <div class="folder-info">
-      <span class="folder-icon">📁</span>
-      <div>
-        <strong id="folderName">Папка не выбрана</strong>
-        <p id="folderStatus">Выбери папку на компьютере</p>
-      </div>
-    </div>
-
-    <button type="button" id="chooseFolder">
-      Выбрать папку
-    </button>
-  </div>
-
-  <label class="checkbox-row">
-    <input type="checkbox" id="saveImages" checked>
-    Сохранять изображения на компьютер
-  </label>
-</section>
-
-      <p class="hint">
-        Например: Pinterest/ или Images/Pinterest/
+      <p class="description">
+        Выбери папку, в которую Pin2Discord будет сохранять изображения.
       </p>
+
+      <div class="folder-picker">
+        <div class="folder-info">
+          <span class="folder-icon">📁</span>
+
+          <div>
+            <strong id="folderName">Папка не выбрана</strong>
+            <p id="folderStatus">Выбери папку на компьютере</p>
+          </div>
+        </div>
+
+        <button type="button" id="chooseFolder">
+          Выбрать папку
+        </button>
+      </div>
 
       <label class="checkbox-row">
         <input type="checkbox" id="saveImages" checked>
@@ -85,12 +77,15 @@
     </section>
 
     <div class="actions">
-      <button id="saveButton">Сохранить настройки</button>
+      <button id="saveButton">
+        Сохранить настройки
+      </button>
+
       <span id="saveStatus"></span>
     </div>
 
     <footer>
-      Pin2Discord · Version 1.0.0
+      Pin2Discord · Version 1.1.0
     </footer>
 
   </main>
